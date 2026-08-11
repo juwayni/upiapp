@@ -291,8 +291,8 @@ class BackgroundService {
     }
 
     // Check duplicate by transactionId or md5 hash
-    if (transaction.smsRaw != null) {
-      final duplicate = await _dbHelper.getTransactionByHash(transaction.smsRaw!);
+    if (transaction.transactionId.isNotEmpty) {
+      final duplicate = await _dbHelper.getTransactionByHash(transaction.transactionId);
       if (duplicate != null) {
         final diff = transaction.dateTime.difference(duplicate.dateTime).inSeconds.abs();
         if (diff < 120) {
@@ -374,7 +374,7 @@ class BackgroundService {
 
           // Deduplicate
           var txToInsert = tx;
-          final duplicate = await _dbHelper.getTransactionByHash(tx.smsRaw ?? '');
+          final duplicate = await _dbHelper.getTransactionByHash(tx.transactionId);
           if (duplicate != null) {
             final duplicateTime = duplicate.dateTime.millisecondsSinceEpoch;
             final txTime = tx.dateTime.millisecondsSinceEpoch;
@@ -429,7 +429,7 @@ class BackgroundService {
           if (tx.type != 'debit') continue;
 
           var txToInsert = tx;
-          final duplicate = await _dbHelper.getTransactionByHash(tx.smsRaw ?? '');
+          final duplicate = await _dbHelper.getTransactionByHash(tx.transactionId);
           if (duplicate != null) {
             final duplicateTime = duplicate.dateTime.millisecondsSinceEpoch;
             final txTime = tx.dateTime.millisecondsSinceEpoch;
