@@ -16,41 +16,7 @@ import 'services/audio_service.dart';
 import 'services/sync_service.dart';
 import 'services/localization_service.dart';
 import 'services/sync_task_handler.dart';
-import 'screens/splash_screen.dart';
-
-@pragma('vm:entry-point')
-Future<void> backgroundNotificationHandler(Map<String, dynamic> payload) async {
-  debugPrint('⚡⚡⚡ BACKGROUND WAKEUP: Notification Isolate Started ⚡⚡⚡');
-  WidgetsFlutterBinding.ensureInitialized();
-  DartPluginRegistrant.ensureInitialized();
-  try {
-    await Firebase.initializeApp();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
-    final dbId = prefs.getString('db_identifier');
-    if (dbId != null) {
-      await DatabaseHelper.instance.initialize(dbId);
-      await SyncService.instance.init(skipPull: true);
-    }
-    await AudioService.instance.init();
-  } catch (e) {
-    debugPrint('❌ BACKGROUND ERROR: $e');
-  }
-}
-
-void notificationBackgroundDispatcher() {
-  WidgetsFlutterBinding.ensureInitialized();
-  DartPluginRegistrant.ensureInitialized();
-  const MethodChannel('handleBackgroundNotification')
-      .setMethodCallHandler((call) async {
-    if (call.method == 'handleBackgroundNotification') {
-      final args = call.arguments;
-      if (args is Map) {
-        await backgroundNotificationHandler(Map<String, dynamic>.from(args));
-      }
-    }
-  });
-}
+import 'services/background_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -165,7 +131,11 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             scrollBehavior: const _AppScrollBehavior(),
-            home: const SplashScreen(),
+            home: const Scaffold(
+              body: Center(
+                child: Text('UPI Tracker'),
+              ),
+            ),
           );
         },
       ),
