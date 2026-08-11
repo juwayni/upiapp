@@ -17,6 +17,7 @@ import 'services/sync_service.dart';
 import 'services/localization_service.dart';
 import 'services/sync_task_handler.dart';
 import 'services/background_service.dart';
+import 'screens/splash_screen.dart'; // Imported splash screen as entry point
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,7 +86,7 @@ class MyApp extends StatelessWidget {
         listenable: LocalizationService.instance,
         builder: (context, _) {
           return MaterialApp(
-            title: 'UPI Tracker',
+            title: 'Expense Manager',
             theme: ThemeData(
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(
@@ -131,11 +132,7 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             scrollBehavior: const _AppScrollBehavior(),
-            home: const Scaffold(
-              body: Center(
-                child: Text('UPI Tracker'),
-              ),
-            ),
+            home: const SplashScreen(), // Wired splash screen as entry point
           );
         },
       ),
